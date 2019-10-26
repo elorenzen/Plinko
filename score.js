@@ -5,8 +5,21 @@ function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {
     outputs.push([dropPosition, bounciness, size, bucketLabel]);
 }
 
+// Gauges overall accuracy of algorithm
 function runAnalysis() {
-    const bucket = console.log(`The ball will fall into bucket #${bucket}`)
+    const testSetCount = 10
+    // Create predictions for 10 random sets of data
+    const [testSet, trainingSet] = splitDataset(outputs, testSetCount)
+
+    let numberCorrect = 0;
+    for (let i = 0; i < testSet.length; i++) {
+        const bucket = knn(trainingSet, testSet[i][0]);
+        if(bucket === testSet[i][3]) {
+            numberCorrect++;
+        }
+    }
+
+    console.log('Accuracy: ', numberCorrect / testSetCount)
 }
 
 // Helper function
@@ -30,7 +43,7 @@ function distance(pointA, pointB) {
 
 // Differentiates training vs. test data
 function splitDataset(data, testCount) {
-    const shuffled = _.shuffled(data);
+    const shuffled = _.shuffle(data);
 
     const testSet = _.slice(shuffled, 0, testCount);
     const trainingSet = _.slice(shuffled, testCount)
