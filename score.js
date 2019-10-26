@@ -11,15 +11,13 @@ function runAnalysis() {
     // Create predictions for 10 random sets of data
     const [testSet, trainingSet] = splitDataset(outputs, testSetCount)
 
-    let numberCorrect = 0;
-    for (let i = 0; i < testSet.length; i++) {
-        const bucket = knn(trainingSet, testSet[i][0]);
-        if(bucket === testSet[i][3]) {
-            numberCorrect++;
-        }
-    }
+    const accuracy = _.chain(testSet)
+        .filter(testObservation => knn(trainingSet, testObservation[0]) === testObservation[3])
+        .size()
+        .divide(testSetCount)
+        .value()
 
-    console.log('Accuracy: ', numberCorrect / testSetCount)
+    console.log('Accuracy: ', accuracy);
 }
 
 // Helper function
